@@ -1,0 +1,68 @@
+bridge-utils (1.7-1) unstable; urgency=medium
+
+  Linux kernel has changed bridge MAC address selection.
+
+  In older Linux kernels the MAC of the bridge was the lower mac of the
+  devices attached to it, this is no longer the case now at Bullseye. The
+  kernel now makes up a completely new MAC address.
+
+  This means that if you rely on your bridge's MAC address for something
+  like DHCP leases or similar stuff you'll loose this feature. The only way
+  to go back to your old MAC address is to assign it to the bridge
+  explicitly using bridge_hw followed by the wanted MAC address on your
+  bridge definition.
+  
+  To help with the problem caused by the kernel change of address selection
+  (see below for more info on this) we have overloaded bridge_hw option so
+  that you can specify the address you want or the name of an interface to
+  take the MAC address from it.
+
+  In the past setting the bridge hardware address was not considered safe,
+  this is no longer a problem, currently it is necessary or recommended in a
+  lot of scenarios like IPv6, DHCP reservations, ... the ussage of bridge_hw
+  setting if the recommended way of doing this.
+
+  Support for more than one stanza for one interface is now supported, see
+  README and examples.
+
+ -- Santiago Garcia Mantinan <manty@debian.org>  Wed, 24 Feb 2021 12:34:03 +0100
+
+bridge-utils (1.6-1) unstable; urgency=low
+
+  Hotplug disabled by default.
+
+  In stretch we shipped with hotplug enabled and this resulted on several
+  problems that we hadn't spotted before that. We are now going back to
+  what has been the normal behaviour, which is hotplug disabled, this is
+  the behaviour that makes more sense thinking on servers (they usually
+  don't need hotplug) and given that a bridge is something you would
+  typically only use on servers, I think this is what will give us less
+  problems.
+
+  Of course if you were using hotplug you can still enable it setting
+  BRIDGE_HOTPLUG=yes at /etc/default/bridge-utils.
+
+ -- Santiago Garcia Mantinan <manty@debian.org>  Tue, 15 Jan 2019 13:44:27 +0100
+
+bridge-utils (1.5-11) unstable; urgency=low
+
+  Hotplug enabled by default, integration with vlan removed.
+
+  At package version 1.5-3 we introduced hotplug code in the code to add
+  ports to the bridge as they are plugged on the system, however, at version
+  1.5-4 to avoid problems with old setups we had BRIDGE_HOTPLUG=no at
+  /etc/default/bridge-utils to disable the new code (see this
+  bugs.debian.org/673490 for more info).
+
+  Beginning with this release, and given the problems detected since the
+  introduction of systemd, the BRIDGE_HOTPLUG default will be yes in order
+  to enable the hotplug code and avoid the problems with systemd or other
+  hotplug scenarios.
+
+  If you still want the behaviour with hotplug disabled you just have to
+  change BRIDGE_HOTPLUG to no at /etc/default/bridge-utils and you're done.
+
+  On this version we've also removed integration with the vlan package,
+  we're leaving vlan setup to the ifupdown package.
+
+ -- Santiago Garcia Mantinan <manty@debian.org>  Wed, 14 Dec 2016 23:03:19 +0100
